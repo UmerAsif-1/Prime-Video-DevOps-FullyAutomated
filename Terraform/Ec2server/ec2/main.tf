@@ -1,4 +1,9 @@
-Variable 
+variable "ami_id" {}
+variable "instance_type" {}
+variable "key_name" {}
+variable "volume_size" {}
+variable "instance_name" {}
+variable "private_key_path" {} 
 
 resource "aws_instance" "ec2_instance" {
   ami = var.ami_id
@@ -12,7 +17,9 @@ resource "aws_instance" "ec2_instance" {
   root_block_device {
     volume_size = var.volume_size
   }
-}
+
+  depends_on = [ aws_security_group.ec2_sg_ ]
+
 
 #using remote-exec provisioner to install packages
 provisioner "remote-exec" {
@@ -111,3 +118,19 @@ provisioner "remote-exec" {
       "echo 'SonarQube Username & Password: admin'",
    ]
 }
+}
+
+   #Get username and public ip of the instance
+    output "ssh_Access" {
+    value = "ubuntu@${aws_instance.ec2_instance.public_ip}"
+    }
+
+    #Get the public ip of the instance
+    output "public_ip" {
+    value = "${aws_instance.ec2_instance.public_ip}"
+    }
+
+    #Get the private ip of the instance
+    output "private_ip" {
+    value = "${aws_instance.ec2_instance.private_ip}"
+    }
