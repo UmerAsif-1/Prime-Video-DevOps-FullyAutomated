@@ -4,10 +4,6 @@ variable "aws_region" {
   
 }
 
-variable "vpc_id" {
-    description = "VPC ID"
-    type = string
-}
 variable "ec2_sg_name" {
     description = "Name of the security group"
     type = string

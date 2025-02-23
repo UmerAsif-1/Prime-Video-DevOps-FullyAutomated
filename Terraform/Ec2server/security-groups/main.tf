@@ -1,4 +1,3 @@
-variable "vpc_id" {}
 variable "ec2_sg_name" {}
 
 
@@ -7,7 +6,6 @@ resource "aws_security_group" "ec2_sg_" {
 
     name = var.ec2_sg_name
     description = "Allow inbound traffic"
-    vpc_id = var.vpc_id
 
 
 
@@ -128,6 +126,10 @@ egress {
     protocol = "-1"
     cidr_blocks = ["0.0.0.0/0"]
 }
+
+tags = {
+
+    Name = var.ec2_sg_name
 
 }
 
