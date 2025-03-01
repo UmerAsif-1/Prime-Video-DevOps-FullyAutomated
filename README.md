@@ -1,70 +1,117 @@
-# Getting Started with Create React App
+# Prime Video DevOps Fully Automated
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Project Overview
+This project demonstrates a **fully automated CI/CD pipeline** for deploying an **Amazon Prime clone** using modern DevOps tools and best practices.
 
-## Available Scripts
+### Key Features:
+- **Infrastructure as Code (IaC)** with Terraform
+- **Continuous Integration & Deployment (CI/CD)** using Jenkins
+- **Security & Quality Checks** with SonarQube and Trivy
+- **Containerization & Orchestration** using Docker and Kubernetes (EKS)
+- **Automated Deployments** with ArgoCD
+- **Monitoring & Alerting** with Prometheus & Grafana
 
-In the project directory, you can run:
+## Tech Stack
+| Category          | Tools Used |
+|------------------|------------|
+| **Version Control** | GitHub |
+| **Infrastructure** | Terraform, AWS EKS, EC2, IAM, Security Groups |
+| **CI/CD** | Jenkins, GitHub Actions (planned) |
+| **Code Analysis** | SonarQube |
+| **Security** | Aqua Trivy |
+| **Containerization** | Docker, AWS ECR |
+| **Deployment** | Kubernetes, ArgoCD |
+| **Monitoring** | Prometheus, Grafana |
 
-### `npm start`
+## Project Structure
+```
+Prime-Video-DevOps-FullyAutomated/
+├── terraform/                    # Infrastructure as Code (EKS, EC2, Networking)
+├── pipeline/                      # CI/CD Pipeline Scripts
+│   ├── build_pipeline             # Jenkins Build Pipeline
+│   ├── cleanup_pipeline           # Cleanup Resources Pipeline
+│   ├── deployment_eks             # Deployment to EKS Pipeline
+│   ├── deployment_pipeline        # ArgoCD Deployment Pipeline
+├── k8s-manifests/                 # Kubernetes YAML Files
+├── src/                           # Source Code of Amazon Prime Clone
+└── README.md                      # Project Documentation
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Prerequisites
+Ensure you have the following tools installed before proceeding:
+- **AWS CLI**: [Installation Guide](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
+- **Terraform**: [Installation Guide](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
+- **Docker**: [Installation Guide](https://docs.docker.com/get-docker/)
+- **Kubernetes CLI (kubectl)**: [Installation Guide](https://kubernetes.io/docs/tasks/tools/)
+- **Jenkins** (or GitHub Actions planned for CI/CD automation)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Infrastructure Setup (Terraform)
+### 1️⃣ Clone the Repository
+```bash
+git clone https://github.com/UmerAsif-1/Prime-Video-DevOps-FullyAutomated.git
+cd Prime-Video-DevOps-FullyAutomated
+```
+### 2️⃣ Configure AWS
+```bash
+aws configure   # Provide your AWS access & secret keys
+```
+### 3️⃣ Deploy Infrastructure
+```bash
+cd terraform/
+terraform init
+terraform apply --auto-approve
+```
+This sets up **EC2 instances, EKS clusters, IAM roles, and networking**.
 
-### `npm test`
+## CI/CD Pipeline (Jenkins & GitHub Actions)
+### 1️⃣ Jenkins Pipeline Stages:
+1. **Git Checkout**: Pulls the latest code.
+2. **SonarQube Analysis**: Performs static code analysis.
+3. **Security Scan (Trivy)**: Checks vulnerabilities.
+4. **Build & Push Docker Image**: Pushes to AWS ECR.
+5. **Deploy to EKS**: Deploys using ArgoCD.
+6. **Monitoring Setup**: Configures Prometheus & Grafana.
+7. **Cleanup Pipeline**: Deletes unused resources.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Deployment to Kubernetes (EKS)
+Once the Docker image is built and pushed, deploy it to Kubernetes using:
+```bash
+kubectl apply -f k8s-manifests/
+```
+To verify the running services:
+```bash
+kubectl get pods
+kubectl get svc
+```
 
-### `npm run build`
+## Monitoring with Prometheus & Grafana
+1. **Install Helm Charts**:
+```bash
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm install prometheus prometheus-community/kube-prometheus-stack -n monitoring
+```
+2. **Expose Grafana Dashboard**:
+```bash
+kubectl patch svc grafana -n monitoring -p '{"spec": {"type": "LoadBalancer"}}'
+```
+Access Grafana at `http://<LoadBalancer-IP>:3000`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Cleanup Resources
+To delete the AWS infrastructure:
+```bash
+terraform destroy --auto-approve
+```
+To remove Kubernetes resources:
+```bash
+kubectl delete -f k8s-manifests/
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Future Enhancements
+✅ **Integrate GitHub Actions for CI/CD**  
+✅ **Automate rollback mechanism**  
+✅ **Add centralized logging with ELK Stack**  
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+---
 
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## 📧 Contact
+For queries, reach out via [LinkedIn](https://www.linkedin.com/in/umer-asif/)
