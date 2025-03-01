@@ -11,6 +11,8 @@
 # production
 /build
 
+#Key
+Terraform/Key.pem
 # misc
 .DS_Store
 .env.local
